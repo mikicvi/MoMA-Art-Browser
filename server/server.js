@@ -15,10 +15,10 @@ app.use(express.json());
 app.use('/api/items', artworksRouter);
 
 // Serve static assets if in production
-app.use(express.static(path.join(__dirname, '..', 'client', 'build')));
+app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
 });
 
 // Start server & Connect to in-memory MongoDB
