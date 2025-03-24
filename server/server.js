@@ -28,16 +28,32 @@ app.get('*', (req, res) => {
         await mongoose.connect(mongoServer.getUri());
         console.log('Connected to in-memory MongoDB');
 
-        // Load artwork data from file
+        // Load artwork data from file or GitHub if local file doesn't exist
         const artworksPath = path.join(__dirname, '..', 'Artworks.json');
-        const rawData = await fs.readFile(artworksPath, 'utf8');
-        const artworks = JSON.parse(rawData);
+        let artworks;
+        try {
+            const rawData = await fs.readFile(artworksPath, 'utf8');
+            artworks = JSON.parse(rawData);
+            console.log('Loaded artworks from local file');
+        } catch (error) {
+            if (error.code === 'ENOENT') {
+                console.log('Artworks.json not found locally, fetching from GitHub...');
+                const response = await fetch('https://raw.githubusercontent.com/MuseumofModernArt/collection/main/Artworks.json');
+                if (!response.ok) throw new Error('Failed to fetch from GitHub');
+                artworks = await response.json();
+                // Save the file locally for future use
+                await fs.writeFile(artworksPath, JSON.stringify(artworks, null, 2));
+                console.log('Downloaded and saved artworks from GitHub');
+            } else {
+                throw error;
+            }
+        }
 
         // Insert artworks if database is empty
         const existingArtworks = await Artwork.countDocuments();
         if (existingArtworks === 0) {
             await Artwork.insertMany(artworks);
-            console.log(`Loaded ${artworks.length} artworks from Artworks.json`);
+            console.log(`Loaded ${artworks.length} artworks into database`);
         }
 
         const PORT = process.env.PORT || 3001;
@@ -46,9 +62,6 @@ app.get('*', (req, res) => {
         });
     } catch (err) {
         console.error('Failed to start server:', err);
-        if (err.code === 'ENOENT') {
-            console.error('Artworks.json file not found in project root');
-        }
         process.exit(1);
     }
 })();
