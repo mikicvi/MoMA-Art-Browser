@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ArtworkForm from './ArtworkForm';
+import EditArtworkModal from './EditArtworkModal';
 
 export default function ArtworkList() {
 	const [artworks, setArtworks] = useState([]);
@@ -8,6 +9,9 @@ export default function ArtworkList() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(false);
+	// Edit state
+	const [editingArtwork, setEditingArtwork] = useState(null);
+	const [showEditModal, setShowEditModal] = useState(false);
 
 	const fetchArtworks = async (page = 1) => {
 		setLoading(true);
@@ -63,6 +67,8 @@ export default function ArtworkList() {
 		try {
 			await axios.put(`/api/items/${id}`, updatedFields);
 			fetchArtworks();
+			setShowEditModal(false);
+			setEditingArtwork(null);
 		} catch (err) {
 			console.error(err);
 		}
@@ -131,11 +137,10 @@ export default function ArtworkList() {
 									<div className='card-footer bg-transparent border-0 d-flex justify-content-between'>
 										<button
 											className='btn btn-outline-primary btn-sm'
-											onClick={() =>
-												updateArtwork(art._id, {
-													Title: art.Title + ' (UPDATED)',
-												})
-											}
+											onClick={() => {
+												setEditingArtwork(art);
+												setShowEditModal(true);
+											}}
 										>
 											Edit
 										</button>
@@ -185,6 +190,16 @@ export default function ArtworkList() {
 						</ul>
 					</nav>
 				</>
+			)}
+			{showEditModal && (
+				<EditArtworkModal
+					artwork={editingArtwork}
+					onSave={(updatedFields) => updateArtwork(editingArtwork._id, updatedFields)}
+					onClose={() => {
+						setShowEditModal(false);
+						setEditingArtwork(null);
+					}}
+				/>
 			)}
 		</div>
 	);
