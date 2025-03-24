@@ -19,6 +19,17 @@ export default function EditArtworkModal({ artwork, onSave, onClose }) {
 		}
 	}, [artwork]);
 
+	useEffect(() => {
+		const handleEscape = (e) => {
+			if (e.key === 'Escape') {
+				onClose();
+			}
+		};
+
+		document.addEventListener('keydown', handleEscape);
+		return () => document.removeEventListener('keydown', handleEscape);
+	}, [onClose]);
+
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		onSave({
