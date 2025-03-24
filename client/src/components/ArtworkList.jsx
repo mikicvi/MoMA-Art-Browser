@@ -12,6 +12,11 @@ export default function ArtworkList() {
 	// Edit state
 	const [editingArtwork, setEditingArtwork] = useState(null);
 	const [showEditModal, setShowEditModal] = useState(false);
+	const [showAdvanced, setShowAdvanced] = useState(false);
+	const [advancedSearch, setAdvancedSearch] = useState({
+		artist: '',
+		year: '',
+	});
 
 	const fetchArtworks = async (page = 1) => {
 		setLoading(true);
@@ -33,12 +38,17 @@ export default function ArtworkList() {
 
 	const handleSearch = async (e) => {
 		e.preventDefault();
-		if (!searchQuery) {
+		if (!searchQuery && !advancedSearch.artist && !advancedSearch.year) {
 			fetchArtworks();
 			return;
 		}
 		try {
-			const res = await axios.get(`/api/items/search/title?q=${searchQuery}`);
+			const params = new URLSearchParams();
+			if (searchQuery) params.append('title', searchQuery);
+			if (advancedSearch.artist) params.append('artist', advancedSearch.artist);
+			if (advancedSearch.year) params.append('year', advancedSearch.year);
+
+			const res = await axios.get(`/api/search/advanced?${params}`);
 			setArtworks(res.data);
 		} catch (err) {
 			console.error(err);
@@ -85,17 +95,63 @@ export default function ArtworkList() {
 			{/* Search Bar with modern styling */}
 			<div className='row justify-content-center mb-4'>
 				<div className='col-md-8'>
-					<form className='d-flex gap-2' onSubmit={handleSearch}>
-						<input
-							type='text'
-							className='form-control form-control-lg'
-							placeholder='Search artworks...'
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-						/>
-						<button type='submit' className='btn btn-primary px-4'>
-							Search
-						</button>
+					<form onSubmit={handleSearch}>
+						<div className='input-group mb-3'>
+							<input
+								type='text'
+								className='form-control form-control-lg'
+								placeholder='Search artworks...'
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+							/>
+							<button
+								className='btn btn-outline-secondary'
+								type='button'
+								onClick={() => setShowAdvanced(!showAdvanced)}
+							>
+								<i className='bi bi-sliders'></i>
+							</button>
+							<button type='submit' className='btn btn-primary px-4'>
+								Search
+							</button>
+						</div>
+
+						{showAdvanced && (
+							<div className='card mb-3'>
+								<div className='card-body'>
+									<div className='row g-3'>
+										<div className='col-md-6'>
+											<input
+												type='text'
+												className='form-control'
+												placeholder='Artist'
+												value={advancedSearch.artist}
+												onChange={(e) =>
+													setAdvancedSearch({
+														...advancedSearch,
+														artist: e.target.value,
+													})
+												}
+											/>
+										</div>
+										<div className='col-md-6'>
+											<input
+												type='number'
+												className='form-control'
+												placeholder='Year'
+												value={advancedSearch.year}
+												onChange={(e) =>
+													setAdvancedSearch({
+														...advancedSearch,
+														year: e.target.value,
+													})
+												}
+											/>
+										</div>
+									</div>
+								</div>
+							</div>
+						)}
 					</form>
 				</div>
 			</div>

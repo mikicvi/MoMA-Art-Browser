@@ -10,7 +10,7 @@ export default function NavBar() {
 		<nav className='navbar navbar-expand-lg navbar-dark bg-dark'>
 			<div className='container'>
 				<Link to='/' className='navbar-brand'>
-					Art Catalogue
+					The Museum Of Modern Art (MoMA) Catalogue Manager
 				</Link>
 				<button
 					className='navbar-toggler'

@@ -89,4 +89,18 @@ router.get('/search/title', async (req, res) => {
     }
 });
 
+router.get('/search/advanced', async (req, res) => {
+    try {
+        const query = {};
+        if (req.query.title) query.Title = new RegExp(req.query.title, 'i');
+        if (req.query.artist) query.Artist = new RegExp(req.query.artist, 'i');
+        if (req.query.year) query.Year = req.query.year;
+
+        const results = await Artwork.find(query);
+        res.json(results);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
 module.exports = router;
