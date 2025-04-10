@@ -92,13 +92,29 @@ router.get('/search/title', async (req, res) => {
 router.get('/search/advanced', async (req, res) => {
     try {
         const query = {};
-        if (req.query.title) query.Title = new RegExp(req.query.title, 'i');
-        if (req.query.artist) query.Artist = new RegExp(req.query.artist, 'i');
-        if (req.query.year) query.Year = req.query.year;
+
+        if (req.query.title) {
+            query.Title = new RegExp(req.query.title, 'i');
+        }
+
+        if (req.query.artist) {
+            // Search for artist in the array
+            query.Artist = {
+                $elemMatch: {
+                    $regex: new RegExp(req.query.artist, 'i')
+                }
+            };
+        }
+
+        if (req.query.year) {
+            // Search for year in the Date field
+            query.Date = new RegExp(req.query.year, 'i');
+        }
 
         const results = await Artwork.find(query);
         res.json(results);
     } catch (err) {
+        console.error('Search error:', err);
         res.status(500).json({ message: err.message });
     }
 });

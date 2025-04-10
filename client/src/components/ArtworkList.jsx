@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ArtworkForm from './ArtworkForm';
 import EditArtworkModal from './EditArtworkModal';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function ArtworkList() {
 	const [artworks, setArtworks] = useState([]);
@@ -17,6 +18,7 @@ export default function ArtworkList() {
 		artist: '',
 		year: '',
 	});
+	const { user, token } = useAuth();
 
 	const fetchArtworks = async (page = 1) => {
 		setLoading(true);
@@ -38,20 +40,26 @@ export default function ArtworkList() {
 
 	const handleSearch = async (e) => {
 		e.preventDefault();
-		if (!searchQuery && !advancedSearch.artist && !advancedSearch.year) {
-			fetchArtworks();
-			return;
-		}
+		setLoading(true);
 		try {
+			let results;
+			if (!searchQuery && !advancedSearch.artist && !advancedSearch.year) {
+				await fetchArtworks();
+				return;
+			}
+
 			const params = new URLSearchParams();
 			if (searchQuery) params.append('title', searchQuery);
 			if (advancedSearch.artist) params.append('artist', advancedSearch.artist);
-			if (advancedSearch.year) params.append('year', advancedSearch.year);
+			if (advancedSearch.year) params.append('year', advancedSearch.year.toString());
 
-			const res = await axios.get(`/api/search/advanced?${params}`);
-			setArtworks(res.data);
+			const response = await axios.get(`/api/items/search/advanced?${params}`);
+			setArtworks(response.data);
+			setTotalPages(1); // Reset pagination for search results
 		} catch (err) {
-			console.error(err);
+			console.error('Search error:', err);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -88,11 +96,29 @@ export default function ArtworkList() {
 		fetchArtworks(page);
 	};
 
+	const purchaseArtwork = async (artworkId) => {
+		if (!user) {
+			alert('Please login to purchase artworks');
+			return;
+		}
+
+		try {
+			await axios.post(
+				`/api/users/${user.id}/purchase/${artworkId}`,
+				{},
+				{ headers: { Authorization: `Bearer ${token}` } }
+			);
+			alert('Artwork purchased successfully!');
+		} catch (error) {
+			alert(error.response?.data?.message || 'Failed to purchase artwork');
+		}
+	};
+
 	return (
 		<div className='container py-4'>
 			<h2 className='mb-4 text-center'>Art Collection</h2>
 
-			{/* Search Bar with modern styling */}
+			{/* Search Bar */}
 			<div className='row justify-content-center mb-4'>
 				<div className='col-md-8'>
 					<form onSubmit={handleSearch}>
@@ -115,7 +141,7 @@ export default function ArtworkList() {
 								Search
 							</button>
 						</div>
-
+						{/* Advanced Search */}
 						{showAdvanced && (
 							<div className='card mb-3'>
 								<div className='card-body'>
@@ -157,7 +183,7 @@ export default function ArtworkList() {
 			</div>
 
 			<ArtworkForm addArtwork={addArtwork} />
-
+			{/* Artworks List */}
 			{loading ? (
 				<div className='text-center py-5'>
 					<div className='spinner-border text-primary' role='status'>
@@ -192,20 +218,28 @@ export default function ArtworkList() {
 									</div>
 									<div className='card-footer bg-transparent border-0 d-flex justify-content-between'>
 										<button
-											className='btn btn-outline-primary btn-sm'
-											onClick={() => {
-												setEditingArtwork(art);
-												setShowEditModal(true);
-											}}
+											className='btn btn-primary btn-sm'
+											onClick={() => purchaseArtwork(art._id)}
 										>
-											Edit
+											Purchase
 										</button>
-										<button
-											className='btn btn-outline-danger btn-sm'
-											onClick={() => deleteArtwork(art._id)}
-										>
-											Delete
-										</button>
+										<div>
+											<button
+												className='btn btn-outline-primary btn-sm me-2'
+												onClick={() => {
+													setEditingArtwork(art);
+													setShowEditModal(true);
+												}}
+											>
+												Edit
+											</button>
+											<button
+												className='btn btn-outline-danger btn-sm'
+												onClick={() => deleteArtwork(art._id)}
+											>
+												Delete
+											</button>
+										</div>
 									</div>
 								</div>
 							</div>
@@ -218,6 +252,7 @@ export default function ArtworkList() {
 						</div>
 					)}
 
+					{/* Pagination */}
 					<nav className='mt-4' aria-label='Page navigation'>
 						<ul className='pagination justify-content-center'>
 							<li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>

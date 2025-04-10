@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function NavBar() {
 	const [isNavCollapsed, setIsNavCollapsed] = useState(true);
+	const { user, logout } = useAuth();
 
 	const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
 
@@ -34,6 +36,33 @@ export default function NavBar() {
 								About
 							</Link>
 						</li>
+						{user ? (
+							<>
+								<li className='nav-item'>
+									<Link to='/profile' className='nav-link'>
+										Profile
+									</Link>
+								</li>
+								<li className='nav-item'>
+									<button onClick={logout} className='nav-link btn btn-link'>
+										Logout
+									</button>
+								</li>
+							</>
+						) : (
+							<>
+								<li className='nav-item'>
+									<Link to='/login' className='nav-link'>
+										Login
+									</Link>
+								</li>
+								<li className='nav-item'>
+									<Link to='/register' className='nav-link'>
+										Register
+									</Link>
+								</li>
+							</>
+						)}
 					</ul>
 				</div>
 			</div>

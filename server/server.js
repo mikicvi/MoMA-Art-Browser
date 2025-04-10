@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -5,6 +6,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const path = require('path');
 const fs = require('fs').promises;
 const artworksRouter = require('./routes/artworks');
+const usersRouter = require('./routes/users');
 const Artwork = require('./models/Artwork');
 
 const app = express();
@@ -13,13 +15,18 @@ app.use(express.json());
 
 // RESTful routes for artworks
 app.use('/api/items', artworksRouter);
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
 
-// Serve static assets if in production
-app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
+    });
 
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
-});
+};
+
+// RESTful routes for users
+app.use('/api/users', usersRouter);
+
 
 // Start server & Connect to in-memory MongoDB
 (async () => {
@@ -27,6 +34,9 @@ app.get('*', (req, res) => {
         const mongoServer = await MongoMemoryServer.create();
         await mongoose.connect(mongoServer.getUri());
         console.log('Connected to in-memory MongoDB');
+
+        // Add this line after establishing MongoDB connection to verify JWT_SECRET is loaded
+        console.log('JWT_SECRET is set:', !!process.env.JWT_SECRET);
 
         // Load artwork data from file or GitHub if local file doesn't exist
         const artworksPath = path.join(__dirname, '..', 'Artworks.json');
