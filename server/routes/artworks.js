@@ -89,33 +89,39 @@ router.get('/search/title', async (req, res) => {
     }
 });
 
+// Advanced search with pagination
 router.get('/search/advanced', async (req, res) => {
     try {
-        const query = {};
+        const { title, artist, year } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 21;
+        const skip = (page - 1) * limit;
 
-        if (req.query.title) {
-            query.Title = new RegExp(req.query.title, 'i');
-        }
-
-        if (req.query.artist) {
-            // Search for artist in the array
+        let query = {};
+        if (title) query.Title = new RegExp(title, 'i');
+        if (artist) {
             query.Artist = {
                 $elemMatch: {
-                    $regex: new RegExp(req.query.artist, 'i')
+                    $regex: new RegExp(artist, 'i')
                 }
             };
         }
+        if (year) query.Date = new RegExp(year, 'i');
 
-        if (req.query.year) {
-            // Search for year in the Date field
-            query.Date = new RegExp(req.query.year, 'i');
-        }
+        const total = await Artwork.countDocuments(query);
+        const items = await Artwork.find(query)
+            .skip(skip)
+            .limit(limit);
 
-        const results = await Artwork.find(query);
-        res.json(results);
-    } catch (err) {
-        console.error('Search error:', err);
-        res.status(500).json({ message: err.message });
+        res.json({
+            items,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            total
+        });
+    } catch (error) {
+        console.error('Search error:', error);
+        res.status(500).json({ message: error.message });
     }
 });
 

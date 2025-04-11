@@ -28,7 +28,7 @@ export default function Login() {
 					<div
 						className='card'
 						style={{
-							border: 'none',
+							border: '1px solid rgba(66, 66, 66, 0.18)',
 							borderRadius: '12px',
 							boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
 						}}

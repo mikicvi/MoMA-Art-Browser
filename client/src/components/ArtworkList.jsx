@@ -41,13 +41,12 @@ export default function ArtworkList() {
 		fetchArtworks();
 	}, []);
 
-	const handleSearch = async (e) => {
-		e.preventDefault();
+	const handleSearch = async (e, page = 1) => {
+		e?.preventDefault();
 		setLoading(true);
 		try {
-			let results;
 			if (!searchQuery && !advancedSearch.artist && !advancedSearch.year) {
-				await fetchArtworks();
+				await fetchArtworks(page);
 				return;
 			}
 
@@ -55,10 +54,13 @@ export default function ArtworkList() {
 			if (searchQuery) params.append('title', searchQuery);
 			if (advancedSearch.artist) params.append('artist', advancedSearch.artist);
 			if (advancedSearch.year) params.append('year', advancedSearch.year.toString());
+			params.append('page', page.toString());
+			params.append('limit', '21');
 
 			const response = await axios.get(`/api/items/search/advanced?${params}`);
-			setArtworks(response.data);
-			setTotalPages(1); // Reset pagination for search results
+			setArtworks(response.data.items);
+			setCurrentPage(response.data.currentPage);
+			setTotalPages(response.data.totalPages);
 		} catch (err) {
 			console.error('Search error:', err);
 		} finally {
@@ -96,7 +98,11 @@ export default function ArtworkList() {
 	};
 
 	const handlePageChange = (page) => {
-		fetchArtworks(page);
+		if (searchQuery || advancedSearch.artist || advancedSearch.year) {
+			handleSearch(null, page);
+		} else {
+			fetchArtworks(page);
+		}
 	};
 
 	const purchaseArtwork = async (artworkId) => {
@@ -128,7 +134,7 @@ export default function ArtworkList() {
 			{/* Search Bar */}
 			<div className='row justify-content-center mb-4'>
 				<div className='col-md-8'>
-					<form onSubmit={handleSearch} className='search-form'>
+					<form onSubmit={(e) => handleSearch(e, currentPage)} className='search-form'>
 						<div className='input-group mb-3'>
 							<input
 								type='text'
@@ -216,7 +222,7 @@ export default function ArtworkList() {
 								<div
 									className='card h-100'
 									style={{
-										border: 'none',
+										border: '1px solid rgba(66, 66, 66, 0.18)',
 										borderRadius: '12px',
 										boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
 										transition: 'transform 0.2s',
