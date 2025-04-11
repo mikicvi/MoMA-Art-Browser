@@ -10,6 +10,7 @@ export default function ArtworkList() {
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
 	const [loading, setLoading] = useState(false);
+	const [showForm, setShowForm] = useState(false);
 	// Edit state
 	const [editingArtwork, setEditingArtwork] = useState(null);
 	const [showEditModal, setShowEditModal] = useState(false);
@@ -121,7 +122,7 @@ export default function ArtworkList() {
 			{/* Search Bar */}
 			<div className='row justify-content-center mb-4'>
 				<div className='col-md-8'>
-					<form onSubmit={handleSearch}>
+					<form onSubmit={handleSearch} className='search-form'>
 						<div className='input-group mb-3'>
 							<input
 								type='text'
@@ -131,13 +132,13 @@ export default function ArtworkList() {
 								onChange={(e) => setSearchQuery(e.target.value)}
 							/>
 							<button
-								className='btn btn-outline-secondary'
+								className='btn btn-info btn-lg'
 								type='button'
 								onClick={() => setShowAdvanced(!showAdvanced)}
 							>
 								<i className='bi bi-sliders'></i>
 							</button>
-							<button type='submit' className='btn btn-primary px-4'>
+							<button type='submit' className='btn btn-primary btn-lg'>
 								Search
 							</button>
 						</div>
@@ -182,7 +183,20 @@ export default function ArtworkList() {
 				</div>
 			</div>
 
-			<ArtworkForm addArtwork={addArtwork} />
+			<div className="mb-4">
+				<button
+					className="btn btn-success btn-lg w-100 w-md-auto"
+					type="button"
+					onClick={() => setShowForm(!showForm)}
+				>
+					{showForm ? 'Hide Form' : 'Add New Artwork'}
+				</button>
+				
+				{showForm && (
+					<ArtworkForm addArtwork={addArtwork} />
+				)}
+			</div>
+
 			{/* Artworks List */}
 			{loading ? (
 				<div className='text-center py-5'>
@@ -195,7 +209,18 @@ export default function ArtworkList() {
 					<div className='row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mt-3'>
 						{artworks.map((art) => (
 							<div key={art._id} className='col'>
-								<div className='card h-100 shadow-sm'>
+								<div
+									className='card h-100'
+									style={{
+										border: 'none',
+										borderRadius: '12px',
+										boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+										transition: 'transform 0.2s',
+										cursor: 'pointer',
+									}}
+									onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
+									onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
+								>
 									{art.ImageURL && (
 										<img
 											src={art.ImageURL}
@@ -204,11 +229,15 @@ export default function ArtworkList() {
 											style={{
 												height: '200px',
 												objectFit: 'cover',
+												borderTopLeftRadius: '12px',
+												borderTopRightRadius: '12px',
 											}}
 										/>
 									)}
 									<div className='card-body'>
-										<h5 className='card-title'>{art.Title}</h5>
+										<h5 className='card-title' style={{ color: 'var(--primary-color)' }}>
+											{art.Title}
+										</h5>
 										<p className='card-text'>
 											<small className='text-muted'>{art.Artist?.join(', ')}</small>
 										</p>
@@ -216,16 +245,17 @@ export default function ArtworkList() {
 											<small className='text-muted'>{art.Date}</small>
 										</p>
 									</div>
+									{/* Card actions */}
 									<div className='card-footer bg-transparent border-0 d-flex justify-content-between'>
 										<button
-											className='btn btn-primary btn-sm'
+											className='btn btn-success btn-sm'
 											onClick={() => purchaseArtwork(art._id)}
 										>
 											Purchase
 										</button>
 										<div>
 											<button
-												className='btn btn-outline-primary btn-sm me-2'
+												className='btn btn-info btn-sm me-2'
 												onClick={() => {
 													setEditingArtwork(art);
 													setShowEditModal(true);
@@ -234,7 +264,7 @@ export default function ArtworkList() {
 												Edit
 											</button>
 											<button
-												className='btn btn-outline-danger btn-sm'
+												className='btn btn-danger btn-sm'
 												onClick={() => deleteArtwork(art._id)}
 											>
 												Delete
@@ -257,21 +287,21 @@ export default function ArtworkList() {
 						<ul className='pagination justify-content-center'>
 							<li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
 								<button
-									className='page-link'
+									className='btn btn-primary'
 									onClick={() => handlePageChange(currentPage - 1)}
 									disabled={currentPage === 1}
 								>
 									Previous
 								</button>
 							</li>
-							<li className='page-item'>
-								<span className='page-link'>
+							<li className='page-item mx-2'>
+								<span className='btn btn-outline-primary disabled'>
 									Page {currentPage} of {totalPages}
 								</span>
 							</li>
 							<li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
 								<button
-									className='page-link'
+									className='btn btn-primary'
 									onClick={() => handlePageChange(currentPage + 1)}
 									disabled={currentPage === totalPages}
 								>
