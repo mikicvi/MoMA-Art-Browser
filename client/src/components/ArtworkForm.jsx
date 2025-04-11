@@ -25,8 +25,8 @@ export default function ArtworkForm({ addArtwork }) {
 	};
 
 	return (
-		<div className="card">
-			<div className="card-body">
+		<div className='card'>
+			<div className='card-body'>
 				<form onSubmit={handleSubmit}>
 					<div className='row g-3'>
 						<div className='col-md-6'>

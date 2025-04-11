@@ -1,16 +1,28 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const UserSchema = new mongoose.Schema({
-    id: { type: Number, unique: true },
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    purchasedArtworks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Artwork' }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
+const userSchema = new Schema({
+    username: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    purchasedArtworks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Artwork'
+    }]
 });
 
-UserSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
     if (this.isNew) {
         const lastUser = await this.constructor.findOne({}, {}, { sort: { 'id': -1 } });
         this.id = lastUser ? lastUser.id + 1 : 1;
@@ -18,5 +30,4 @@ UserSchema.pre('save', async function (next) {
     next();
 });
 
-
-module.exports = mongoose.model('User', UserSchema);
+module.exports = mongoose.model('User', userSchema);

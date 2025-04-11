@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
+import Toast from './Toast';
 
 export default function Profile() {
 	const [purchasedArtworks, setPurchasedArtworks] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const { user, token } = useAuth();
 	const navigate = useNavigate();
+	const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
 	useEffect(() => {
 		if (!user) {
@@ -17,12 +19,19 @@ export default function Profile() {
 
 		const fetchPurchasedArtworks = async () => {
 			try {
+				console.log('Fetching purchased artworks...');
 				const response = await axios.get(`/api/users/${user.id}/purchased`, {
 					headers: { Authorization: `Bearer ${token}` },
 				});
+				console.log('Purchased artworks:', response.data);
 				setPurchasedArtworks(response.data);
 			} catch (error) {
 				console.error('Failed to fetch purchased artworks:', error);
+				setToast({
+					show: true,
+					message: 'Failed to load purchased artworks',
+					type: 'danger',
+				});
 			} finally {
 				setLoading(false);
 			}
@@ -30,6 +39,27 @@ export default function Profile() {
 
 		fetchPurchasedArtworks();
 	}, [user, token, navigate]);
+
+	const handleCancelPurchase = async (artworkId) => {
+		try {
+			await axios.post(
+				`/api/users/${user.id}/purchases/${artworkId}/cancel`,
+				{},
+				{ headers: { Authorization: `Bearer ${token}` } }
+			);
+			setToast({ show: true, message: 'Purchase cancelled successfully', type: 'success' });
+			const response = await axios.get(`/api/users/${user.id}/purchased`, {
+				headers: { Authorization: `Bearer ${token}` },
+			});
+			setPurchasedArtworks(response.data); // Refresh the purchases list
+		} catch (error) {
+			setToast({
+				show: true,
+				message: error.response?.data?.message || 'Error cancelling purchase',
+				type: 'danger',
+			});
+		}
+	};
 
 	if (loading) {
 		return <div className='text-center mt-5'>Loading...</div>;
@@ -67,12 +97,25 @@ export default function Profile() {
 									<p className='card-text'>
 										<small className='text-muted'>{artwork.Artist?.join(', ')}</small>
 									</p>
+									<button
+										className='btn btn-danger btn-sm'
+										onClick={() => handleCancelPurchase(artwork._id)}
+									>
+										Cancel Purchase
+									</button>
 								</div>
 							</div>
 						</div>
 					))}
 				</div>
 			)}
+
+			<Toast
+				show={toast.show}
+				message={toast.message}
+				type={toast.type}
+				onClose={() => setToast({ ...toast, show: false })}
+			/>
 		</div>
 	);
 }

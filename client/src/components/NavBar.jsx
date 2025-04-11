@@ -7,7 +7,10 @@ export default function NavBar() {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<nav className='navbar navbar-expand-lg' style={{ backgroundColor: 'var(--background-color)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+		<nav
+			className='navbar navbar-expand-lg'
+			style={{ backgroundColor: 'var(--background-color)', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+		>
 			<div className='container'>
 				<Link to='/' className='navbar-brand' style={{ color: 'var(--primary-color)', fontWeight: 'bold' }}>
 					MoMA Art Browser
@@ -23,24 +26,34 @@ export default function NavBar() {
 				<div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`}>
 					<ul className='navbar-nav ms-auto'>
 						<li className='nav-item'>
-							<Link to='/' className='btn btn-link nav-link'>Home</Link>
+							<Link to='/' className='btn btn-link nav-link'>
+								Home
+							</Link>
 						</li>
 						{user ? (
 							<>
 								<li className='nav-item'>
-									<Link to='/profile' className='btn btn-link nav-link'>Profile</Link>
+									<Link to='/profile' className='btn btn-link nav-link'>
+										Profile
+									</Link>
 								</li>
 								<li className='nav-item'>
-									<button onClick={logout} className='btn btn-danger nav-link'>Logout</button>
+									<button onClick={logout} className='btn btn-danger nav-link'>
+										Logout
+									</button>
 								</li>
 							</>
 						) : (
 							<>
 								<li className='nav-item me-2'>
-									<Link to='/login' className='btn btn-primary'>Login</Link>
+									<Link to='/login' className='btn btn-primary'>
+										Login
+									</Link>
 								</li>
 								<li className='nav-item'>
-									<Link to='/register' className='btn btn-success'>Register</Link>
+									<Link to='/register' className='btn btn-success'>
+										Register
+									</Link>
 								</li>
 							</>
 						)}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ArtworkForm from './ArtworkForm';
 import EditArtworkModal from './EditArtworkModal';
+import Toast from './Toast';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ArtworkList() {
@@ -20,6 +21,7 @@ export default function ArtworkList() {
 		year: '',
 	});
 	const { user, token } = useAuth();
+	const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
 
 	const fetchArtworks = async (page = 1) => {
 		setLoading(true);
@@ -99,7 +101,7 @@ export default function ArtworkList() {
 
 	const purchaseArtwork = async (artworkId) => {
 		if (!user) {
-			alert('Please login to purchase artworks');
+			setToast({ show: true, message: 'Please login to purchase artworks', type: 'danger' });
 			return;
 		}
 
@@ -109,9 +111,13 @@ export default function ArtworkList() {
 				{},
 				{ headers: { Authorization: `Bearer ${token}` } }
 			);
-			alert('Artwork purchased successfully!');
+			setToast({ show: true, message: 'Artwork purchased successfully!', type: 'success' });
 		} catch (error) {
-			alert(error.response?.data?.message || 'Failed to purchase artwork');
+			setToast({
+				show: true,
+				message: error.response?.data?.message || 'Failed to purchase artwork',
+				type: 'danger',
+			});
 		}
 	};
 
@@ -183,18 +189,16 @@ export default function ArtworkList() {
 				</div>
 			</div>
 
-			<div className="mb-4">
+			<div className='mb-4'>
 				<button
-					className="btn btn-success btn-lg w-100 w-md-auto"
-					type="button"
+					className='btn btn-success btn-lg w-100 w-md-auto'
+					type='button'
 					onClick={() => setShowForm(!showForm)}
 				>
 					{showForm ? 'Hide Form' : 'Add New Artwork'}
 				</button>
-				
-				{showForm && (
-					<ArtworkForm addArtwork={addArtwork} />
-				)}
+
+				{showForm && <ArtworkForm addArtwork={addArtwork} />}
 			</div>
 
 			{/* Artworks List */}
@@ -322,6 +326,12 @@ export default function ArtworkList() {
 					}}
 				/>
 			)}
+			<Toast
+				show={toast.show}
+				message={toast.message}
+				type={toast.type}
+				onClose={() => setToast({ ...toast, show: false })}
+			/>
 		</div>
 	);
 }

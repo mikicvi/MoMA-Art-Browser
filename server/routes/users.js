@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
+const Artwork = require('../models/Artwork');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -79,22 +80,31 @@ router.post('/:userId/purchase/:artworkId', authenticateToken, async (req, res) 
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        const artwork = await Artwork.findById(artworkId);
+        if (!artwork) {
+            return res.status(404).json({ message: 'Artwork not found' });
         }
 
-        // Check if artwork is already purchased
-        if (user.purchasedArtworks.includes(artworkId)) {
+        if (artwork.purchased) {
             return res.status(400).json({ message: 'Artwork already purchased' });
         }
 
+        // Update artwork purchase status
+        artwork.purchased = true;
+        artwork.purchasedBy = userId;
+        await artwork.save();
+
+        // Add to user's purchases
+        const user = await User.findById(userId);
+        if (!user.purchasedArtworks) {
+            user.purchasedArtworks = [];
+        }
         user.purchasedArtworks.push(artworkId);
         await user.save();
 
         res.json({ message: 'Artwork purchased successfully' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ message: 'Error purchasing artwork' });
     }
 });
 
@@ -102,20 +112,52 @@ router.post('/:userId/purchase/:artworkId', authenticateToken, async (req, res) 
 router.get('/:userId/purchased', authenticateToken, async (req, res) => {
     try {
         const { userId } = req.params;
+        const user = await User.findById(userId).populate('purchasedArtworks');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user.purchasedArtworks || []);
+    } catch (error) {
+        console.error('Error fetching purchased artworks:', error);
+        res.status(500).json({ message: 'Error fetching purchased artworks' });
+    }
+});
+
+// Cancel purchase
+router.post('/:userId/purchases/:artworkId/cancel', authenticateToken, async (req, res) => {
+    try {
+        const { userId, artworkId } = req.params;
 
         // Verify user owns the request
         if (req.user.userId !== userId) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        const user = await User.findById(userId).populate('purchasedArtworks');
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+        const artwork = await Artwork.findById(artworkId);
+        if (!artwork) {
+            return res.status(404).json({ message: 'Artwork not found' });
         }
 
-        res.json(user.purchasedArtworks);
+        if (!artwork.purchased || artwork.purchasedBy.toString() !== userId) {
+            return res.status(400).json({ message: 'You do not own this artwork' });
+        }
+
+        // Reset artwork purchase status
+        artwork.purchased = false;
+        artwork.purchasedBy = null;
+        await artwork.save();
+
+        // Remove from user's purchases
+        const user = await User.findById(userId);
+        user.purchasedArtworks = user.purchasedArtworks.filter(id => id.toString() !== artworkId);
+        await user.save();
+
+        res.json({ message: 'Purchase cancelled successfully' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Cancel purchase error:', error);
+        res.status(500).json({ message: 'Error cancelling purchase' });
     }
 });
 

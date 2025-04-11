@@ -23,7 +23,16 @@ const ArtworkSchema = new mongoose.Schema({
     OnView: String,
     // Example numeric fields
     "Height (cm)": Number,
-    "Width (cm)": Number
+    "Width (cm)": Number,
+    purchased: {
+        type: Boolean,
+        default: false
+    },
+    purchasedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    }
 }, {
     timestamps: true
 });
