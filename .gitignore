@@ -41,3 +41,12 @@ logs/
 # Optional: misc
 *.pem
 .vercel
+
+# MacOS
+*.DS_Store
+# Windows
+Thumbs.db
+# Linux
+*~
+# Artworks json
+Artworks.json
