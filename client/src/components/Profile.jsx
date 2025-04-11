@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import Toast from './Toast';
+import LightboxImage from './LightboxImage';
 
 export default function Profile() {
 	const [purchasedArtworks, setPurchasedArtworks] = useState([]);
@@ -85,11 +86,9 @@ export default function Profile() {
 						<div key={artwork._id} className='col'>
 							<div className='card h-100'>
 								{artwork.ImageURL && (
-									<img
+									<LightboxImage
 										src={artwork.ImageURL}
-										className='card-img-top'
 										alt={artwork.Title}
-										style={{ height: '200px', objectFit: 'cover' }}
 									/>
 								)}
 								<div className='card-body'>

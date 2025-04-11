@@ -3,6 +3,7 @@ import axios from 'axios';
 import ArtworkForm from './ArtworkForm';
 import EditArtworkModal from './EditArtworkModal';
 import Toast from './Toast';
+import LightboxImage from './LightboxImage';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function ArtworkList() {
@@ -232,16 +233,9 @@ export default function ArtworkList() {
 									onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
 								>
 									{art.ImageURL && (
-										<img
+										<LightboxImage
 											src={art.ImageURL}
-											className='card-img-top'
 											alt={art.Title}
-											style={{
-												height: '200px',
-												objectFit: 'cover',
-												borderTopLeftRadius: '12px',
-												borderTopRightRadius: '12px',
-											}}
 										/>
 									)}
 									<div className='card-body'>
