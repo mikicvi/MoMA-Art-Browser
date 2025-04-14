@@ -48,8 +48,8 @@ app.use('/api/users', usersRouter);
         } catch (error) {
             if (error.code === 'ENOENT') {
                 console.log('Artworks.json not found locally, fetching from GitHub...');
-                const response = await fetch('https://raw.githubusercontent.com/MuseumofModernArt/collection/main/Artworks.json');
-                if (!response.ok) throw new Error('Failed to fetch from GitHub');
+                const response = await fetch('https://media.githubusercontent.com/media/MuseumofModernArt/collection/main/Artworks.json');
+                if (!response.ok) throw new Error('Failed to fetch from GitHub MoMA repository');
                 artworks = await response.json();
                 // Save the file locally for future use
                 await fs.writeFile(artworksPath, JSON.stringify(artworks, null, 2));
