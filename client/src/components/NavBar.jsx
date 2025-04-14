@@ -47,7 +47,7 @@ export default function NavBar() {
 						</li>
 						<li className='nav-item'>
 							<Link to='/about' className='nav-link px-3 py-2'>
-								About
+								About this page
 							</Link>
 						</li>
 						{user ? (

@@ -33,7 +33,9 @@ export default function AboutPage() {
 										storing data in MongoDB, enabling full CRUD (Create, Read, Update, and Delete)
 										operations on artwork items, and making a client interface for users to interact
 										with it all. The Node.js server handles the main functionality, while the React
-										application consumes the server's REST API through HTTP requests.
+										application consumes the server's REST API through asynchronous AJAX requests
+										using Axios. This enables real-time updates and a smooth user experience without
+										page refreshes.
 									</p>
 									<ul className='list-group list-group-flush'>
 										<li className='list-group-item'>CRUD endpoints with Express</li>
@@ -198,6 +200,55 @@ export default function AboutPage() {
 												<li className='list-group-item bg-light'>
 													There's a single user role, with no dedicated admin features meaning
 													any user can edit or delete any artwork.
+												</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div className='accordion-item'>
+							<h2 className='accordion-header'>
+								<button
+									className='accordion-button collapsed'
+									type='button'
+									data-bs-toggle='collapse'
+									data-bs-target='#alternatives'
+								>
+									Alternative Implementations
+								</button>
+							</h2>
+							<div
+								id='alternatives'
+								className='accordion-collapse collapse'
+								data-bs-parent='#aboutAccordion'
+							>
+								<div className='accordion-body'>
+									<div className='card bg-light border-0'>
+										<div className='card-body'>
+											<ul className='list-group list-group-flush'>
+												<li className='list-group-item bg-light'>
+													Use Next.js for server-side rendering and improved SEO
+												</li>
+												<li className='list-group-item bg-light'>
+													Implement GraphQL instead of REST for more efficient data fetching
+												</li>
+												<li className='list-group-item bg-light'>
+													Use PostgreSQL or MySQL for a traditional relational database
+													approach
+												</li>
+												<li className='list-group-item bg-light'>
+													Replace MongoDB with Firebase for real-time updates and simplified
+													backend
+												</li>
+												<li className='list-group-item bg-light'>
+													Use TypeScript for enhanced type safety and better development
+													experience
+												</li>
+												<li className='list-group-item bg-light'>
+													Implement WebSockets for real-time features instead of REST/AJAX
+													calls
 												</li>
 											</ul>
 										</div>
