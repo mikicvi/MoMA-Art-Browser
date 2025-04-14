@@ -13,20 +13,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// RESTful routes for artworks
+// API Routes - must come before static file serving
 app.use('/api/items', artworksRouter);
+app.use('/api/users', usersRouter);
+
+// Static file serving for production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '..', 'client', 'dist')));
 
+    // This must be last - catch all route for client-side routing
     app.get('*', (req, res) => {
         res.sendFile(path.join(__dirname, '..', 'client', 'dist', 'index.html'));
     });
-
-};
-
-// RESTful routes for users
-app.use('/api/users', usersRouter);
-
+}
 
 // Start server & Connect to in-memory MongoDB
 (async () => {
@@ -35,7 +34,7 @@ app.use('/api/users', usersRouter);
         await mongoose.connect(mongoServer.getUri());
         console.log('Connected to in-memory MongoDB');
 
-        // Add this line after establishing MongoDB connection to verify JWT_SECRET is loaded
+        // Log after making MongoDB connection to verify JWT_SECRET is loaded
         console.log('JWT_SECRET is set:', !!process.env.JWT_SECRET);
 
         // Load artwork data from file or GitHub if local file doesn't exist
@@ -69,6 +68,7 @@ app.use('/api/users', usersRouter);
         const PORT = process.env.PORT || 3001;
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
+            console.log(`Local URL: http://localhost:${PORT}`);
         });
     } catch (err) {
         console.error('Failed to start server:', err);

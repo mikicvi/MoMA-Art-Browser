@@ -20,17 +20,27 @@ export default function Profile() {
 
 		const fetchPurchasedArtworks = async () => {
 			try {
-				console.log('Fetching purchased artworks...');
 				const response = await axios.get(`/api/users/${user.id}/purchased`, {
-					headers: { Authorization: `Bearer ${token}` },
+					headers: {
+						Authorization: `Bearer ${token}`,
+						Accept: 'application/json',
+					},
 				});
-				console.log('Purchased artworks:', response.data);
-				setPurchasedArtworks(response.data);
+
+				// Check if response data is HTML (error case)
+				if (typeof response.data === 'string' && response.data.includes('<!DOCTYPE html>')) {
+					console.error('Received HTML instead of JSON');
+					setPurchasedArtworks([]);
+					return;
+				}
+
+				setPurchasedArtworks(response.data || []);
 			} catch (error) {
 				console.error('Failed to fetch purchased artworks:', error);
+				setPurchasedArtworks([]);
 				setToast({
 					show: true,
-					message: 'Failed to load purchased artworks',
+					message: error.response?.data?.message || 'Failed to load purchased artworks',
 					type: 'danger',
 				});
 			} finally {
@@ -40,6 +50,10 @@ export default function Profile() {
 
 		fetchPurchasedArtworks();
 	}, [user, token, navigate]);
+
+	if (!user) {
+		return null;
+	}
 
 	const handleCancelPurchase = async (artworkId) => {
 		try {
@@ -85,12 +99,7 @@ export default function Profile() {
 					{purchasedArtworks.map((artwork) => (
 						<div key={artwork._id} className='col'>
 							<div className='card h-100'>
-								{artwork.ImageURL && (
-									<LightboxImage
-										src={artwork.ImageURL}
-										alt={artwork.Title}
-									/>
-								)}
+								{artwork.ImageURL && <LightboxImage src={artwork.ImageURL} alt={artwork.Title} />}
 								<div className='card-body'>
 									<h5 className='card-title'>{artwork.Title}</h5>
 									<p className='card-text'>
