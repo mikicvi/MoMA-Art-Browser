@@ -1,12 +1,61 @@
-# React + Vite
+# MoMA Art Browser Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the front-end React application for the MoMA Art Browser, a modern web application that allows users to browse, search, and manage artworks from the Museum of Modern Art collection.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+-   Browse and search through MoMA artwork collection
+-   Advanced search capabilities (by title, artist, year)
+-   User authentication (login/register)
+-   User profiles with purchased artworks
+-   Image lightbox for artwork previews
+-   Responsive design using Bootstrap
+-   CRUD operations for artworks
+-   Pagination for large datasets
 
-## Expanding the ESLint configuration
+## Technology Stack
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+-   React 19
+-   Vite
+-   React Router for navigation
+-   Axios for API requests
+-   Bootstrap 5 + Bootswatch Flatly theme
+-   Bootstrap Icons
+
+## Getting Started
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Start the development server:
+
+```bash
+npm run dev
+```
+
+3. Build for production:
+
+```bash
+npm run build
+```
+
+## Environment Setup
+
+Make sure the corresponding backend server is running on port 3001 (or update the proxy settings in `vite.config.js` accordingly).
+
+## Project Structure
+
+-   `/src/components` - React components
+-   `/src/contexts` - Context providers (Auth)
+-   `/src/assets` - Static assets
+-   `/src/styles` - CSS stylesheets
+
+## Available Scripts
+
+-   `npm run dev` - Start development server
+-   `npm run build` - Build for production
+-   `npm run lint` - Run ESLint
+-   `npm run preview` - Preview production build locally
