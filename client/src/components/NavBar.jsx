@@ -30,6 +30,11 @@ export default function NavBar() {
 								Home
 							</Link>
 						</li>
+						<li className='nav-item'>
+							<Link to='/about' className='btn btn-link nav-link'>
+								About
+							</Link>
+						</li>
 						{user ? (
 							<>
 								<li className='nav-item'>
