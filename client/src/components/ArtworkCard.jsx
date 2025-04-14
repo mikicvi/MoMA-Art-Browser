@@ -1,5 +1,5 @@
 import LightboxImage from './LightboxImage';
-import noPic from '../../public/no-pic.png';
+import noPic from '../assets/no-pic.png';
 
 export default function ArtworkCard({ artwork, onPurchase, onEdit, onDelete }) {
 	return (

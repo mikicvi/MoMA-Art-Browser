@@ -19,6 +19,8 @@ export default function ArtworkList() {
 	const [showEditModal, setShowEditModal] = useState(false);
 	const { user, token } = useAuth();
 	const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+	const [searchQuery, setSearchQuery] = useState('');
+	const [advancedSearch, setAdvancedSearch] = useState({ artist: '', year: '' });
 
 	const fetchArtworks = async (page = 1) => {
 		setLoading(true);
@@ -40,6 +42,8 @@ export default function ArtworkList() {
 	}, []);
 
 	const handleSearch = async (query, advanced, page = 1) => {
+		setSearchQuery(query);
+		setAdvancedSearch(advanced);
 		setLoading(true);
 		try {
 			if (!query && !advanced.artist && !advanced.year) {
@@ -65,9 +69,10 @@ export default function ArtworkList() {
 		}
 	};
 
-	const handleClear = () => {
-		setArtworks(originalArtworks);
-		setCurrentPage(1);
+	const handleClear = async () => {
+		setSearchQuery('');
+		setAdvancedSearch({ artist: '', year: '' });
+		await fetchArtworks(1);
 	};
 
 	const addArtwork = async (artwork) => {
@@ -171,7 +176,7 @@ export default function ArtworkList() {
 					<Pagination
 						currentPage={currentPage}
 						totalPages={totalPages}
-						onPageChange={(page) => handleSearch(null, {}, page)}
+						onPageChange={(page) => handleSearch(searchQuery, advancedSearch, page)}
 					/>
 				</>
 			)}

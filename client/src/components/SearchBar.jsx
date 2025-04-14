@@ -38,13 +38,13 @@ export default function SearchBar({ onSearch, onClear }) {
 							<label htmlFor='searchInput'>Search artworks...</label>
 						</div>
 						<button
-							className='btn btn-info btn-lg'
+							className='btn btn-outline-info btn-lg'
 							type='button'
 							onClick={() => setShowAdvanced(!showAdvanced)}
 						>
 							<i className='bi bi-sliders'></i>
 						</button>
-						<button type='button' className='btn btn-danger btn-lg' onClick={handleClear}>
+						<button type='button' className='btn btn-outline-danger btn-lg' onClick={handleClear}>
 							<i className='bi bi-trash'></i>
 						</button>
 						<button type='submit' className='btn btn-primary btn-lg'>
