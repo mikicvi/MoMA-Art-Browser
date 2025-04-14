@@ -1,4 +1,5 @@
 import LightboxImage from './LightboxImage';
+import noPic from '../../public/no-pic.png';
 
 export default function ArtworkCard({ artwork, onPurchase, onEdit, onDelete }) {
 	return (
@@ -15,7 +16,7 @@ export default function ArtworkCard({ artwork, onPurchase, onEdit, onDelete }) {
 				onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
 				onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
 			>
-				{artwork.ImageURL && <LightboxImage src={artwork.ImageURL} alt={artwork.Title} />}
+				<LightboxImage src={artwork.ImageURL || noPic} alt={artwork.Title} />
 				<div className='card-body'>
 					<h5 className='card-title' style={{ color: 'var(--primary-color)' }}>
 						{artwork.Title}
