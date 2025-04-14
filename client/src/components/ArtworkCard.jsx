@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import LightboxImage from './LightboxImage';
+import InfoArtworkModal from './InfoArtworkModal';
 import noPic from '../assets/no-pic.png';
 
 export default function ArtworkCard({ artwork, onPurchase, onEdit, onDelete }) {
+	const [showInfo, setShowInfo] = useState(false);
+
 	return (
 		<div className='col'>
 			<div
@@ -28,12 +32,17 @@ export default function ArtworkCard({ artwork, onPurchase, onEdit, onDelete }) {
 						<small className='text-muted'>{artwork.Date}</small>
 					</p>
 				</div>
-				<div className='card-footer bg-transparent border-0 d-flex justify-content-between'>
-					<button className='btn btn-success btn-sm' onClick={() => onPurchase(artwork._id)}>
-						Purchase
-					</button>
+				<div className='card-footer bg-transparent border-0 d-flex justify-content-between align-items-center'>
 					<div>
-						<button className='btn btn-info btn-sm me-2' onClick={() => onEdit(artwork)}>
+						<button className='btn btn-success btn-sm me-2' onClick={() => onPurchase(artwork._id)}>
+							Purchase
+						</button>
+						<button className='btn btn-info btn-sm' onClick={() => setShowInfo(true)}>
+							More Info
+						</button>
+					</div>
+					<div>
+						<button className='btn btn-warning btn-sm me-2' onClick={() => onEdit(artwork)}>
 							Edit
 						</button>
 						<button className='btn btn-danger btn-sm' onClick={() => onDelete(artwork._id)}>
@@ -42,6 +51,7 @@ export default function ArtworkCard({ artwork, onPurchase, onEdit, onDelete }) {
 					</div>
 				</div>
 			</div>
+			{showInfo && <InfoArtworkModal artwork={artwork} onClose={() => setShowInfo(false)} />}
 		</div>
 	);
 }
