@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function ArtworkList() {
 	const [artworks, setArtworks] = useState([]);
+	const [originalArtworks, setOriginalArtworks] = useState([]);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [currentPage, setCurrentPage] = useState(1);
 	const [totalPages, setTotalPages] = useState(1);
@@ -29,6 +30,7 @@ export default function ArtworkList() {
 		try {
 			const res = await axios.get(`/api/items?page=${page}&limit=21`);
 			setArtworks(res.data.items);
+			setOriginalArtworks(res.data.items);
 			setCurrentPage(res.data.currentPage);
 			setTotalPages(res.data.totalPages);
 		} catch (err) {
@@ -128,6 +130,17 @@ export default function ArtworkList() {
 		}
 	};
 
+	const clearSearch = () => {
+		setSearchQuery('');
+		setAdvancedSearch({
+			artist: '',
+			year: '',
+		});
+		setShowAdvanced(false);
+		setArtworks(originalArtworks);
+		setCurrentPage(1);
+	};
+
 	return (
 		<div className='container py-4'>
 			<h2 className='mb-4 text-center'>Art Collection</h2>
@@ -141,6 +154,7 @@ export default function ArtworkList() {
 								<input
 									type='text'
 									className='form-control form-control-lg'
+									id='searchInput'
 									placeholder='Search artworks...'
 									value={searchQuery}
 									onChange={(e) => setSearchQuery(e.target.value)}
@@ -153,6 +167,9 @@ export default function ArtworkList() {
 								onClick={() => setShowAdvanced(!showAdvanced)}
 							>
 								<i className='bi bi-sliders'></i>
+							</button>
+							<button type='button' className='btn btn-danger btn-lg' onClick={clearSearch}>
+								<i className='bi bi-trash'></i>
 							</button>
 							<button type='submit' className='btn btn-primary btn-lg'>
 								Search
