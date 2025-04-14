@@ -24,6 +24,13 @@ export default function ArtworkForm({ addArtwork }) {
 		setImageUrl('');
 	};
 
+	const resetForm = () => {
+		setTitle('');
+		setArtist('');
+		setDate('');
+		setImageUrl('');
+	};
+
 	return (
 		<div className='card'>
 			<div className='card-body'>
@@ -82,8 +89,15 @@ export default function ArtworkForm({ addArtwork }) {
 								<label htmlFor='imageInput'>Image URL</label>
 							</div>
 						</div>
-						<div className='col-12'>
-							<button type='submit' className='btn btn-success'>
+						<div className='col-12 d-flex gap-2 justify-content-end'>
+							<button
+								type='button'
+								className='btn btn-outline-danger btn-lg w-100 w-md-auto'
+								onClick={resetForm}
+							>
+								Reset Form
+							</button>
+							<button type='submit' className='btn btn-outline-success btn-lg w-100 w-md-auto'>
 								Add Artwork
 							</button>
 						</div>
