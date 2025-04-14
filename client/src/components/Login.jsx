@@ -4,16 +4,23 @@ import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Login() {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const [formData, setFormData] = useState({ email: '', password: '' });
 	const [error, setError] = useState('');
 	const navigate = useNavigate();
 	const { login } = useAuth();
 
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prevFormData) => ({
+			...prevFormData,
+			[name]: value,
+		}));
+	};
+
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		try {
-			const response = await axios.post('/api/users/login', { email, password });
+			const response = await axios.post('/api/users/login', formData);
 			login(response.data.user, response.data.token);
 			navigate('/profile');
 		} catch (err) {
@@ -39,27 +46,35 @@ export default function Login() {
 							</h2>
 							{error && <div className='alert alert-danger'>{error}</div>}
 							<form onSubmit={handleSubmit}>
-								<div className='mb-3'>
-									<label className='form-label'>Email</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='email'
 										className='form-control'
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
+										id='email'
+										name='email'
+										value={formData.email}
+										onChange={handleChange}
+										placeholder='name@example.com'
 										required
+										autoComplete='email'
 									/>
+									<label htmlFor='email'>Email address</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Password</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='password'
 										className='form-control'
-										value={password}
-										onChange={(e) => setPassword(e.target.value)}
+										id='password'
+										name='password'
+										value={formData.password}
+										onChange={handleChange}
+										placeholder='Password'
 										required
+										autoComplete='current-password'
 									/>
+									<label htmlFor='password'>Password</label>
 								</div>
-								<button type='submit' className='btn btn-primary w-100'>
+								<button type='submit' className='btn btn-success w-100'>
 									Login
 								</button>
 							</form>

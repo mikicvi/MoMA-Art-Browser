@@ -137,13 +137,16 @@ export default function ArtworkList() {
 				<div className='col-md-8'>
 					<form onSubmit={(e) => handleSearch(e, currentPage)} className='search-form'>
 						<div className='input-group mb-3'>
-							<input
-								type='text'
-								className='form-control form-control-lg'
-								placeholder='Search artworks...'
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-							/>
+							<div className='form-floating'>
+								<input
+									type='text'
+									className='form-control form-control-lg'
+									placeholder='Search artworks...'
+									value={searchQuery}
+									onChange={(e) => setSearchQuery(e.target.value)}
+								/>
+								<label htmlFor='searchInput'>Search artworks...</label>
+							</div>
 							<button
 								className='btn btn-info btn-lg'
 								type='button'
@@ -161,32 +164,38 @@ export default function ArtworkList() {
 								<div className='card-body'>
 									<div className='row g-3'>
 										<div className='col-md-6'>
-											<input
-												type='text'
-												className='form-control'
-												placeholder='Artist'
-												value={advancedSearch.artist}
-												onChange={(e) =>
-													setAdvancedSearch({
-														...advancedSearch,
-														artist: e.target.value,
-													})
-												}
-											/>
+											<div className='form-floating'>
+												<input
+													type='text'
+													className='form-control'
+													placeholder='Artist'
+													value={advancedSearch.artist}
+													onChange={(e) =>
+														setAdvancedSearch({
+															...advancedSearch,
+															artist: e.target.value,
+														})
+													}
+												/>
+												<label htmlFor='titleInput'>Artists(s) - separate with commas</label>
+											</div>
 										</div>
 										<div className='col-md-6'>
-											<input
-												type='number'
-												className='form-control'
-												placeholder='Year'
-												value={advancedSearch.year}
-												onChange={(e) =>
-													setAdvancedSearch({
-														...advancedSearch,
-														year: e.target.value,
-													})
-												}
-											/>
+											<div className='form-floating'>
+												<input
+													type='number'
+													className='form-control'
+													placeholder='Year'
+													value={advancedSearch.year}
+													onChange={(e) =>
+														setAdvancedSearch({
+															...advancedSearch,
+															year: e.target.value,
+														})
+													}
+												/>
+												<label htmlFor='yearInput'>Year</label>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -232,12 +241,7 @@ export default function ArtworkList() {
 									onMouseOver={(e) => (e.currentTarget.style.transform = 'translateY(-5px)')}
 									onMouseOut={(e) => (e.currentTarget.style.transform = 'translateY(0)')}
 								>
-									{art.ImageURL && (
-										<LightboxImage
-											src={art.ImageURL}
-											alt={art.Title}
-										/>
-									)}
+									{art.ImageURL && <LightboxImage src={art.ImageURL} alt={art.Title} />}
 									<div className='card-body'>
 										<h5 className='card-title' style={{ color: 'var(--primary-color)' }}>
 											{art.Title}

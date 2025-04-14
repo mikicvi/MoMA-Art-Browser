@@ -57,11 +57,11 @@ export default function EditArtworkModal({ artwork, onSave, onClose }) {
 						</div>
 						<form onSubmit={handleSubmit}>
 							<div className='modal-body'>
-								<div className='mb-3'>
-									<label className='form-label'>Title</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='text'
 										className='form-control'
+										id='titleInput'
 										value={editedArtwork.Title}
 										onChange={(e) =>
 											setEditedArtwork({
@@ -69,14 +69,16 @@ export default function EditArtworkModal({ artwork, onSave, onClose }) {
 												Title: e.target.value,
 											})
 										}
+										placeholder='Title'
 										required
 									/>
+									<label htmlFor='titleInput'>Title</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Artist(s)</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='text'
 										className='form-control'
+										id='artistInput'
 										value={editedArtwork.Artist}
 										onChange={(e) =>
 											setEditedArtwork({
@@ -84,14 +86,15 @@ export default function EditArtworkModal({ artwork, onSave, onClose }) {
 												Artist: e.target.value,
 											})
 										}
-										placeholder='Separate multiple artists with commas'
+										placeholder='Artist(s)'
 									/>
+									<label htmlFor='artistInput'>Artist(s) - Separate with commas</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Date</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='text'
 										className='form-control'
+										id='dateInput'
 										value={editedArtwork.Date}
 										onChange={(e) =>
 											setEditedArtwork({
@@ -99,13 +102,15 @@ export default function EditArtworkModal({ artwork, onSave, onClose }) {
 												Date: e.target.value,
 											})
 										}
+										placeholder='Date'
 									/>
+									<label htmlFor='dateInput'>Date</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Image URL</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='url'
 										className='form-control'
+										id='imageInput'
 										value={editedArtwork.ImageURL}
 										onChange={(e) =>
 											setEditedArtwork({
@@ -113,7 +118,9 @@ export default function EditArtworkModal({ artwork, onSave, onClose }) {
 												ImageURL: e.target.value,
 											})
 										}
+										placeholder='Image URL'
 									/>
+									<label htmlFor='imageInput'>Image URL</label>
 								</div>
 							</div>
 							<div className='modal-footer'>

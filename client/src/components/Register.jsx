@@ -88,53 +88,61 @@ export default function Register() {
 							</h2>
 							{error && <div className='alert alert-danger'>{error}</div>}
 							<form onSubmit={handleSubmit}>
-								<div className='mb-3'>
-									<label className='form-label'>Username</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='text'
-										name='username'
 										className='form-control'
+										id='username'
+										name='username'
 										value={formData.username}
 										onChange={handleChange}
+										placeholder='Username'
 										required
 										autoComplete='username'
 									/>
+									<label htmlFor='username'>Username</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Email</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='email'
-										name='email'
 										className='form-control'
+										id='email'
+										name='email'
 										value={formData.email}
 										onChange={handleChange}
+										placeholder='name@example.com'
 										required
 										autoComplete='email'
 									/>
+									<label htmlFor='email'>Email address</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Password</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='password'
-										name='password'
 										className='form-control'
+										id='password'
+										name='password'
 										value={formData.password}
 										onChange={handleChange}
+										placeholder='Password'
 										required
 										autoComplete='new-password'
 									/>
+									<label htmlFor='password'>Password</label>
 								</div>
-								<div className='mb-3'>
-									<label className='form-label'>Confirm Password</label>
+								<div className='form-floating mb-3'>
 									<input
 										type='password'
-										name='confirmPassword'
 										className='form-control'
+										id='confirmPassword'
+										name='confirmPassword'
 										value={formData.confirmPassword}
 										onChange={handleChange}
+										placeholder='Confirm Password'
 										required
 										autoComplete='new-password'
 									/>
+									<label htmlFor='confirmPassword'>Confirm Password</label>
 								</div>
 								<button type='submit' className='btn btn-success w-100'>
 									Register
