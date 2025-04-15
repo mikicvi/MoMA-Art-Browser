@@ -89,11 +89,11 @@ export default function AboutPage() {
 															screen sizes
 														</li>
 														<li className='list-group-item bg-light'>
-															Component based frontend for easy addition or changes of
-															features
+															Detailed artwork information modal
 														</li>
 														<li className='list-group-item bg-light'>
-															Basic purchasing functionality
+															Component based frontend for easy addition or changes of
+															features
 														</li>
 													</ul>
 												</div>
@@ -103,6 +103,9 @@ export default function AboutPage() {
 											<div className='card h-100 bg-light border-0'>
 												<div className='card-body'>
 													<ul className='list-group list-group-flush'>
+														<li className='list-group-item bg-light'>
+															Basic purchasing functionality
+														</li>
 														<li className='list-group-item bg-light'>
 															Pagination to organise large sets of artwork
 														</li>
